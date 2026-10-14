@@ -8,6 +8,26 @@ Can leadership trust the migrated data? The pipeline generates a 50,000-loan leg
 
 The data is synthetic and demonstrates a method, not production results. Power BI build steps and a Streamlit fallback are included because Power BI Desktop cannot be run in this environment.
 
+## Visual walkthrough
+
+The short visual demo shows the readiness summary, financial tie-out, and defect drill-down:
+
+![Migration readiness demo](demo/demo.gif)
+
+### Readiness summary
+
+![Readiness summary](dashboard/screenshots/01_readiness_summary.png)
+
+### Financial tie-out
+
+![Financial tie-out](dashboard/screenshots/02_financial_tieout.png)
+
+### Defect drill-down
+
+![Defect drill-down](dashboard/screenshots/03_defect_drilldown.png)
+
+Download the [MP4 demo](demo/demo.mp4) for a larger-screen walkthrough.
+
 ## Quickstart
 
 ```powershell

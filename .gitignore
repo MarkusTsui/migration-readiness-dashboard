@@ -13,4 +13,6 @@ outputs/
 dashboard/*.pbix
 dashboard/screenshots/*
 !dashboard/screenshots/.gitkeep
-
+!dashboard/screenshots/*.png
+!demo/demo.gif
+!demo/demo.mp4
