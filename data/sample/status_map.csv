@@ -1,0 +1,5 @@
+legacy_status,new_status
+A,ACTIVE
+D,DELINQUENT
+C,CLOSED
+W,WRITTEN_OFF
