@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -34,6 +35,47 @@ def _save_summary_card(path: Path, title: str, subtitle: str, lines: list[str], 
         draw.text((100, y), line, fill="#27364b", font=_font(42))
         y += 90
     image.save(path)
+
+
+def _desktop_frame(page: Image.Image, cursor: tuple[int, int], click: bool = False) -> Image.Image:
+    """Place a dashboard page in a browser-like desktop and draw a moving cursor."""
+    canvas = Image.new("RGB", (1280, 720), "#1f2937")
+    draw = ImageDraw.Draw(canvas)
+    draw.rectangle((0, 0, 1280, 34), fill="#111827")
+    draw.ellipse((16, 11, 28, 23), fill="#ef4444")
+    draw.ellipse((36, 11, 48, 23), fill="#f59e0b")
+    draw.ellipse((56, 11, 68, 23), fill="#22c55e")
+    draw.rectangle((0, 34, 1280, 78), fill="#e5e7eb")
+    draw.text((92, 47), "Migration readiness dashboard  |  localhost:8501", fill="#374151", font=_font(20))
+    fitted = page.copy()
+    fitted.thumbnail((1160, 600), Image.Resampling.LANCZOS)
+    left = (1280 - fitted.width) // 2
+    top = 92 + (600 - fitted.height) // 2
+    canvas.paste(fitted, (left, top))
+    x, y = cursor
+    draw.line((x, y, x + 18, y + 30), fill="white", width=5)
+    draw.line((x, y, x + 18, y + 30), fill="#111827", width=2)
+    draw.polygon([(x, y), (x + 2, y + 25), (x + 12, y + 19), (x + 20, y + 29)], fill="white", outline="#111827")
+    if click:
+        draw.ellipse((x - 16, y - 16, x + 16, y + 16), outline="#38bdf8", width=5)
+    return canvas
+
+
+def _make_desktop_demo(pages: list[Image.Image]) -> list[Image.Image]:
+    """Create a short simulated desktop recording with cursor movement and clicks."""
+    frames: list[Image.Image] = []
+    starts = [(190, 150), (1020, 170), (240, 580)]
+    ends = [(1020, 170), (250, 580), (1040, 560)]
+    for page, start, end in zip(pages, starts, ends):
+        for step in range(45):
+            fraction = step / 44
+            cursor = (
+                round(start[0] + (end[0] - start[0]) * fraction),
+                round(start[1] + (end[1] - start[1]) * fraction),
+            )
+            frames.append(_desktop_frame(page, cursor, click=step in (38, 44)))
+        frames.extend([_desktop_frame(page, end)] * 15)
+    return frames
 
 
 def main() -> None:
@@ -77,20 +119,26 @@ def main() -> None:
     fig.savefig(SCREENSHOTS / "03_defect_drilldown.png", dpi=120)
     plt.close(fig)
 
-    frames = [Image.open(path).convert("RGB") for path in (
+    pages = [Image.open(path).convert("RGB") for path in (
         SCREENSHOTS / "01_readiness_summary.png",
         SCREENSHOTS / "02_financial_tieout.png",
         SCREENSHOTS / "03_defect_drilldown.png",
     )]
-    frames[0].save(DEMO / "demo.gif", save_all=True, append_images=frames[1:], duration=1800, loop=0, optimize=True)
+    frames = _make_desktop_demo(pages)
+    frames[0].save(DEMO / "demo.gif", save_all=True, append_images=frames[1:], duration=80, loop=0, optimize=True)
 
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg:
-        subprocess.run(
-            [ffmpeg, "-y", "-i", str(DEMO / "demo.gif"), "-vf", "scale=1280:-2:flags=lanczos",
-             "-c:v", "libx264", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(DEMO / "demo.mp4")],
-            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        )
+        with tempfile.TemporaryDirectory(prefix="migration-demo-") as temp_dir:
+            frame_dir = Path(temp_dir)
+            for index, frame in enumerate(frames):
+                frame.save(frame_dir / f"frame_{index:04d}.png")
+            subprocess.run(
+                [ffmpeg, "-y", "-framerate", "12.5", "-i", str(frame_dir / "frame_%04d.png"),
+                 "-c:v", "libx264", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+                 str(DEMO / "demo.mp4")],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
 
 
 if __name__ == "__main__":

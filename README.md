@@ -10,7 +10,7 @@ The data is synthetic and demonstrates a method, not production results. Power B
 
 ## Visual walkthrough
 
-The short visual demo shows the readiness summary, financial tie-out, and defect drill-down:
+The short simulated desktop demo shows a browser-style dashboard, moving cursor, and page-to-page clicks. It is generated from the actual reconciliation outputs; it is not a screen recording of Power BI Desktop:
 
 ![Migration readiness demo](demo/demo.gif)
 
