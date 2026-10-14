@@ -1,22 +1,30 @@
 PYTHON ?= python
 
-.PHONY: data recon remediate retest report all test clean
+.PHONY: data validate profile recon remediate retest report all test clean
 
 data:
-	$(PYTHON) src/generate_data.py
+	$(PYTHON) -m src.generate_data
 
-recon: data
-	$(PYTHON) src/run_reconciliation.py --stage before
+validate: data
+	$(PYTHON) -m src.validate_data
+
+profile: validate
+	$(PYTHON) -m src.profile_data
+
+recon: profile
+	$(PYTHON) -m src.run_reconciliation --stage before
 
 remediate: recon
-	$(PYTHON) src/remediate.py
+	$(PYTHON) -m src.remediate
 
 retest: remediate
-	$(PYTHON) src/run_reconciliation.py --stage after
+	$(PYTHON) -m src.run_reconciliation --stage after
 
 report: retest
-	$(PYTHON) src/scorecard.py
-	$(PYTHON) src/make_charts.py
+	$(PYTHON) -m src.scorecard
+	$(PYTHON) -m src.impact_ranking
+	$(PYTHON) -m src.make_charts
+	$(PYTHON) -m src.make_demo_assets
 
 all: report
 
@@ -25,4 +33,3 @@ test:
 
 clean:
 	$(PYTHON) -c "from pathlib import Path; import shutil; [shutil.rmtree(p) for p in [Path('outputs'), Path('data')] if p.exists()]; Path('data/sample').mkdir(parents=True, exist_ok=True)"
-

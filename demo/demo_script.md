@@ -1,6 +1,6 @@
 # Demo script
 
-This script is a template; replace every bracketed value with a value read from `outputs/powerbi_data/` after running `make all`.
+Use the generated scorecard and dashboard outputs from `make all` when recording the walkthrough.
 
 **0:00-0:20 — Title:** A lender is migrating 50,000 synthetic loans. The question is whether the data is safe to go live.
 

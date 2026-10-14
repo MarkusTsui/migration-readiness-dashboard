@@ -1,6 +1,6 @@
 # Power BI build steps
 
-Power BI Desktop is not available in this environment. The Streamlit fallback is `dashboard/app.py`; the following steps reproduce the intended three-page report.
+The generated CSVs support a three-page report. The Streamlit view in `dashboard/app.py` provides the same core review without a Power BI file.
 
 1. Run `make all`.
 2. Open Power BI Desktop and select **Get data > Text/CSV**.
@@ -9,4 +9,4 @@ Power BI Desktop is not available in this environment. The Streamlit fallback is
 5. Page 1 title: **"Remediation changes the cutover decision"**. Add before/after verdict cards, check status cards, and a clustered bar chart of failures.
 6. Page 2 title: **"Control totals show where financial risk sits"**. Add product totals, a variance histogram, severity split, and a top-10 variance table.
 7. Page 3 title: **"The remediation queue is specific and actionable"**. Add product, region, severity, and defect-type slicers plus a loan-level table.
-8. Save the file as `dashboard/migration_readiness.pbix` and capture three screenshots in `dashboard/screenshots/`.
+8. Save the report as `dashboard/migration_readiness.pbix` and capture the three page images in `dashboard/screenshots/`.

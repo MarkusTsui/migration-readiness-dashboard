@@ -33,3 +33,13 @@ control = DATA / "before_08_control_totals.csv"
 if control.exists():
     st.header("Financial control totals")
     st.dataframe(pd.read_csv(control), use_container_width=True)
+
+top_variances = DATA / "top_balance_variances.csv"
+if top_variances.exists():
+    st.header("Highest-impact exceptions")
+    st.dataframe(pd.read_csv(top_variances), use_container_width=True)
+
+profile = ROOT / "outputs" / "data_profile.csv"
+if profile.exists():
+    st.header("Input profile")
+    st.dataframe(pd.read_csv(profile), use_container_width=True)

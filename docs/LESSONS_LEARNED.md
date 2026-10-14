@@ -1,11 +1,17 @@
 # Lessons learned
 
-This document is intentionally left for Markus to complete in his own voice after running the project. The build log should capture real obstacles, rework, and decisions; do not replace those reflections with generic claims.
+## 1. Row counts are not enough
 
-## Prompts
+A migration can preserve the overall number of rows while still containing duplicate keys, orphans, missing loans, and incorrect field values. The project therefore combines anti-joins, duplicate checks, field comparisons, and product-level controls.
 
-- What was the hardest bug?
-- What assumption turned out to be wrong?
-- Which check found the most important defect?
-- How did you explain a NO-GO to a non-technical reader?
-- What would you add with more time?
+## 2. Financial checks need two views
+
+The balance check reports both individual variances and aggregate product gaps. This separates a large individual error from many small rounding differences and gives Finance a control-total view.
+
+## 3. Remediation must be re-tested
+
+The corrected file is not treated as proof. The same SQL checks run against the `after` extract, and the scorecard records both stages so the change in decision is visible.
+
+## 4. The next useful improvements
+
+A production version would add run IDs, source-file checksums, an exception workflow, approval history, and database-native execution for larger volumes.

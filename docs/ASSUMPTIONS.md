@@ -1,6 +1,6 @@
-# Assumptions
+# Project assumptions
 
-- The supplied specification is the source of truth.
-- All generated records are synthetic; no real customer information is used.
-- Remediation restores source values after a defect is confirmed. A production process would require Finance and Operations sign-off for material balance changes.
-- Power BI Desktop, screen recording, and owner reflections are human-owned deliverables and are not fabricated by this build.
+- All records are synthetic and contain no customer-identifying information.
+- The legacy extract is the reference for key, status, date, and balance corrections.
+- A production remediation would require Finance approval for material balance changes and an immutable audit record.
+- The acceptance thresholds in `config/thresholds.json` are illustrative and should be agreed with business owners before a real cutover.

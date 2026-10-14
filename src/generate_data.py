@@ -68,7 +68,8 @@ def generate_data(seed: int = SEED, n_loans: int = N_LOANS) -> dict[str, pd.Data
     new = pd.concat([new, orphan], ignore_index=True)
     defect_rows.extend({"loan_id": x, "defect_type": "orphan_in_new"} for x in orphan_ids)
 
-    rounding = choose(.01)
+    positive_balance_indices = np.flatnonzero(balances > 0)
+    rounding = rng.choice(positive_balance_indices, size=max(1, round(n_loans * .01)), replace=False)
     rounding_deltas = dict(zip(
         loan_ids[rounding],
         rng.choice([-1, 1], len(rounding)) * rng.uniform(.10, .50, len(rounding)).round(2),
@@ -77,7 +78,7 @@ def generate_data(seed: int = SEED, n_loans: int = N_LOANS) -> dict[str, pd.Data
     new.loc[rounding_mask, "outstanding_balance"] += new.loc[rounding_mask, "loan_id"].map(rounding_deltas)
     defect_rows.extend({"loan_id": loan_ids[i], "defect_type": "rounding_balance_variance"} for i in rounding)
 
-    material = choose(.005)
+    material = rng.choice(positive_balance_indices, size=max(1, round(n_loans * .005)), replace=False)
     material_multipliers = dict(zip(loan_ids[material], rng.uniform(1.05, 1.40, len(material))))
     material_mask = new["loan_id"].isin(material_multipliers)
     new.loc[material_mask, "outstanding_balance"] *= new.loc[material_mask, "loan_id"].map(material_multipliers)

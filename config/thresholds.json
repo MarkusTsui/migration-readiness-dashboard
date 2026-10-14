@@ -1,0 +1,15 @@
+{
+  "record_count": 50000,
+  "failure_threshold_pct": 0.1,
+  "material_balance_variance": 1.0,
+  "control_total_gap": 1000.0,
+  "checks": {
+    "missing_loans": 0.1,
+    "orphan_loans": 0.1,
+    "duplicate_loan_ids": 0.1,
+    "balance_variance": 0.1,
+    "status_mismatch": 0.1,
+    "null_date_defects": 0.1,
+    "control_total_gap": 0.0
+  }
+}
